@@ -103,6 +103,36 @@ like — it's just doing math on audio features, not actually understanding tast
 
 ---
 
+## 7b. Stretch Features Implemented
+
+### Diversity Penalty (Challenge 3)
+
+After scoring all songs, the recommender applies an artist diversity penalty
+before returning the final list. If a song's artist already appears earlier
+in the ranked results, its score is reduced by 0.15 points. The list is then
+re-sorted so the penalty takes effect before slicing to the top-k.
+
+This directly addresses the filter-bubble bias identified in Section 5. In
+the Jordan profile, LoRoom appeared in both slot #2 (Midnight Coding) and
+slot #3 (Focus Flow). With the diversity penalty active, Focus Flow's score
+is reduced from 0.76 to 0.61, allowing Spacewalk Thoughts (a different
+artist, ambient/chill) to take slot #3 instead. The user gets more variety
+without losing the strongest match at #1. The penalty value (0.15) was chosen
+to be meaningful — large enough to demote a repeated artist past one
+alternative — but not so large that it overrides a genuinely strong second
+match from the same artist.
+
+### Visual Summary Table (Challenge 4)
+
+Terminal output is now rendered as a formatted table using the `tabulate`
+library with the `grid` style. Each row shows the rank, title, artist,
+genre/mood, numeric score, an ASCII progress bar scaled to the score, and
+the single highest-contributing reason for the recommendation. This replaces
+the previous card-style output and makes it easier to compare scores across
+all five results at a glance without reading separate blocks of text.
+
+---
+
 ## 8. Ideas for Improvement
 
 First, the catalogue needs more songs per genre — at least five per category.

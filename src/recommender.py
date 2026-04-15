@@ -209,23 +209,52 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, str]:
     return round(score, 4), explanation
 
 
-def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
+def _apply_diversity_penalty(
+    ranked: List[Tuple[Dict, float, str]],
+    penalty: float = 0.15,
+) -> List[Tuple[Dict, float, str]]:
+    """
+    Reduce the score of any song whose artist already appears earlier
+    in the ranked list by `penalty` points, then re-sort.
+
+    This prevents the same artist dominating multiple slots in the
+    top-k results and improves catalogue diversity.
+    """
+    seen_artists: set = set()
+    adjusted = []
+    for song, score, explanation in ranked:
+        if song["artist"] in seen_artists:
+            score = round(max(0.0, score - penalty), 4)
+        seen_artists.add(song["artist"])
+        adjusted.append((song, score, explanation))
+    return sorted(adjusted, key=lambda x: x[1], reverse=True)
+
+
+def recommend_songs(
+    user_prefs: Dict,
+    songs: List[Dict],
+    k: int = 5,
+    diversity_penalty: float = 0.15,
+) -> List[Tuple[Dict, float, str]]:
     """
     Rank all songs against a user profile and return the top-k results.
 
     Steps:
-      1. Score  — use score_song as a judge for every song in the catalogue,
-                  producing a list of (song, score, explanation) tuples.
-      2. Rank   — sorted() creates a new list ordered by score descending;
-                  the original `songs` list is never mutated.
-      3. Slice  — [:k] returns only the top-k results.
+      1. Score  — score_song judges every song, producing (song, score, explanation) tuples.
+      2. Rank   — sorted() orders by score descending without mutating the input list.
+      3. Diversity — _apply_diversity_penalty reduces scores for repeated artists.
+      4. Slice  — [:k] returns the top-k after diversity adjustment.
 
-    Uses sorted() instead of list.sort() so the input catalogue is not
-    modified in-place; the caller's list remains unchanged after the call.
+    Args:
+        user_prefs: dict of user preference values.
+        songs: full catalogue as a list of song dicts.
+        k: number of results to return (default 5).
+        diversity_penalty: score reduction applied to each repeated artist (default 0.15).
 
     Returns a list of (song_dict, score, explanation) tuples.
     Required by src/main.py
     """
     scored = [(song, *score_song(user_prefs, song)) for song in songs]
     ranked = sorted(scored, key=lambda x: x[1], reverse=True)
-    return ranked[:k]
+    diversified = _apply_diversity_penalty(ranked, penalty=diversity_penalty)
+    return diversified[:k]

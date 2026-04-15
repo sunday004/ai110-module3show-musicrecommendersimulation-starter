@@ -21,6 +21,7 @@ _SRC = Path(__file__).parent
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+from tabulate import tabulate
 from recommender import load_songs, recommend_songs  # noqa: E402
 
 # Resolve data path relative to this file — works from any working directory.
@@ -133,16 +134,15 @@ ADVERSARIAL_PROFILES = {
 WIDTH = 62
 
 
-def _score_bar(score: float, width: int = 20) -> str:
-    """Return an ASCII progress bar proportional to score (0.0–1.0)."""
+def _score_bar(score: float, width: int = 16) -> str:
+    """Return a compact ASCII progress bar proportional to score (0.0–1.0)."""
     filled = round(score * width)
     return "#" * filled + "-" * (width - filled)
 
 
-def _top_reasons(explanation: str, n: int = 3) -> str:
-    """Return the top-n reasons from the comma-separated explanation string."""
-    parts = [p.strip() for p in explanation.split(",")]
-    return "  |  ".join(parts[:n])
+def _top_reason(explanation: str) -> str:
+    """Return only the single highest-weighted reason for the table column."""
+    return explanation.split(",")[0].strip()
 
 
 def _print_profile_header(user_prefs: dict) -> None:
@@ -155,13 +155,21 @@ def _print_profile_header(user_prefs: dict) -> None:
     print(f"{'=' * WIDTH}")
 
 
-def _print_recommendation(rank: int, song: dict, score: float, explanation: str) -> None:
-    bar = _score_bar(score)
-    reasons = _top_reasons(explanation)
-    print(f"\n  #{rank}  {song['title']} by {song['artist']}")
-    print(f"       Score  : {score:.2f}  [{bar}]")
-    print(f"       Genre  : {song['genre']}  |  Mood : {song['mood']}")
-    print(f"       Why    : {reasons}")
+def _print_recommendations_table(recommendations: list) -> None:
+    """Render recommendations as a formatted tabulate table."""
+    headers = ["#", "Title", "Artist", "Genre", "Score", "Bar", "Top Reason"]
+    rows = []
+    for rank, (song, score, explanation) in enumerate(recommendations, start=1):
+        rows.append([
+            rank,
+            song["title"],
+            song["artist"],
+            f"{song['genre']} / {song['mood']}",
+            f"{score:.2f}",
+            _score_bar(score),
+            _top_reason(explanation),
+        ])
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
 
 
 def _run_profiles(songs: list, profiles: dict, section_title: str) -> None:
@@ -172,9 +180,8 @@ def _run_profiles(songs: list, profiles: dict, section_title: str) -> None:
     for user_prefs in profiles.values():
         _print_profile_header(user_prefs)
         recommendations = recommend_songs(user_prefs, songs, k=5)
-        for rank, (song, score, explanation) in enumerate(recommendations, start=1):
-            _print_recommendation(rank, song, score, explanation)
-        print(f"\n  {'-' * (WIDTH - 2)}")
+        _print_recommendations_table(recommendations)
+        print()
 
 
 def main() -> None:
