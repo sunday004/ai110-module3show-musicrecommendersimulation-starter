@@ -1,11 +1,21 @@
-id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
-1,Sunrise City,Neon Echo,pop,happy,0.82,118,0.84,0.79,0.18
-2,Midnight Coding,LoRoom,lofi,chill,0.42,78,0.56,0.62,0.71
-3,Storm Runner,Voltline,rock,intense,0.91,152,0.48,0.66,0.10
-4,Library Rain,Paper Lanterns,lofi,chill,0.35,72,0.60,0.58,0.86
-5,Gym Hero,Max Pulse,pop,intense,0.93,132,0.77,0.88,0.05
-6,Spacewalk Thoughts,Orbit Bloom,ambient,chill,0.28,60,0.65,0.41,0.92
-7,Coffee Shop Stories,Slow Stereo,jazz,relaxed,0.37,90,0.71,0.54,0.89
-8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
-9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
-10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
+id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness,instrumentalness,popularity,release_decade
+1,Sunrise City,Neon Echo,pop,happy,0.82,118,0.84,0.79,0.18,0.03,78,2020
+2,Midnight Coding,LoRoom,lofi,chill,0.42,78,0.56,0.62,0.71,0.82,65,2020
+3,Storm Runner,Voltline,rock,intense,0.91,152,0.48,0.66,0.10,0.12,70,2010
+4,Library Rain,Paper Lanterns,lofi,chill,0.35,72,0.60,0.58,0.86,0.88,58,2020
+5,Gym Hero,Max Pulse,pop,intense,0.93,132,0.77,0.88,0.05,0.02,85,2020
+6,Spacewalk Thoughts,Orbit Bloom,ambient,chill,0.28,60,0.65,0.41,0.92,0.91,42,2010
+7,Coffee Shop Stories,Slow Stereo,jazz,relaxed,0.37,90,0.71,0.54,0.89,0.45,38,1990
+8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22,0.60,55,2010
+9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78,0.85,62,2020
+10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35,0.05,72,2020
+11,Higher Ground,Grace Voices,gospel,uplifting,0.78,102,0.91,0.71,0.55,0.02,60,2010
+12,Lagos Sunrise,Afro Collective,afrobeat,joyful,0.85,118,0.88,0.92,0.20,0.08,74,2020
+13,Velvet Night,Sasha Monroe,r&b,romantic,0.58,88,0.74,0.76,0.45,0.06,68,2020
+14,Still Waters,The Chamber Ensemble,classical,peaceful,0.22,52,0.68,0.28,0.97,0.94,28,2000
+15,City Pulse,Blaze Theory,hip-hop,confident,0.80,95,0.65,0.87,0.08,0.05,80,2020
+16,Dusty Roads,Caleb Hart,country,nostalgic,0.55,98,0.72,0.61,0.78,0.10,52,2000
+17,Island Breeze,Sun Riddim,reggae,relaxed,0.48,82,0.85,0.80,0.50,0.15,45,2010
+18,Midnight Rain,Delta Cross,blues,melancholy,0.44,70,0.38,0.52,0.75,0.20,35,1970
+19,Neon Surge,Voltage Drop,edm,euphoric,0.97,140,0.82,0.94,0.03,0.55,82,2020
+20,Carry Me Home,Ivory James,soul,emotional,0.62,84,0.77,0.68,0.60,0.08,58,2000

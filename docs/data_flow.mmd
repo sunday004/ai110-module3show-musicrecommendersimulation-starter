@@ -1,0 +1,35 @@
+flowchart TD
+    A([User Preferences]) --> B
+
+    subgraph INPUT["INPUT"]
+        A
+        A1["genre, mood, energy\nacousticness, target_bpm"]
+    end
+
+    subgraph PROCESS["PROCESS — Score Every Song"]
+        B["Load songs.csv\n→ List of Song dicts"] --> C
+
+        C{"For each song\nin catalog"}
+
+        C --> D1["genre_match\n× 0.30"]
+        C --> D2["mood_match\n× 0.25"]
+        C --> D3["energy_similarity\n× 0.20"]
+        C --> D4["acoustic_similarity\n× 0.15"]
+        C --> D5["tempo_similarity\n× 0.05"]
+        C --> D6["danceability_similarity\n× 0.05"]
+
+        D1 & D2 & D3 & D4 & D5 & D6 --> E["Sum weighted scores\n→ final score ∈ [0.0, 1.0]"]
+
+        E --> F["Attach score + explanation\nto song"]
+        F --> G["Repeat for all 20 songs\n→ scored list"]
+    end
+
+    subgraph OUTPUT["OUTPUT"]
+        G --> H["Sort by score descending"]
+        H --> I["Return Top K songs\nwith scores + explanations"]
+        I --> J([Ranked Recommendations])
+    end
+
+    style INPUT fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style PROCESS fill:#fef9c3,stroke:#ca8a04,color:#3b2f00
+    style OUTPUT fill:#dcfce7,stroke:#16a34a,color:#14532d
