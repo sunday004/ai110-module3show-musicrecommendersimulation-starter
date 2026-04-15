@@ -122,6 +122,34 @@ to be meaningful — large enough to demote a repeated artist past one
 alternative — but not so large that it overrides a genuinely strong second
 match from the same artist.
 
+### Multiple Ranking Modes (Challenge 2)
+
+The recommender now supports four named weight presets that change how songs
+are ranked, selectable at call time via `mode=`:
+
+| Mode | Genre | Mood | Energy | Use case |
+|---|---|---|---|---|
+| `balanced` | 0.28 | 0.22 | 0.18 | Default — general-purpose |
+| `genre_first` | 0.45 | 0.22 | 0.12 | Discovery within a genre cluster |
+| `mood_first` | 0.15 | 0.42 | 0.18 | Activity/context matching |
+| `energy_focused` | 0.10 | 0.10 | 0.42 | Playlist flow — energy continuity |
+
+The presets live in a `RANKING_MODES` dict in `recommender.py`. `score_song`
+accepts a `weights` dict, and `recommend_songs` accepts a `mode` string that
+looks up the preset before scoring. The terminal output ends with a
+mode-comparison section that runs Jordan's profile through all four presets
+side by side so the differences are visible at a glance.
+
+The Jordan profile shows real movement across modes. Under `mood_first`,
+Spacewalk Thoughts (ambient/chill) rises to slot #3 at score 0.81 — its mood
+match is now worth 0.42 points, more than double the balanced weight. Under
+`energy_focused`, Coffee Shop Stories enters the top 5 at #4 (score 0.74)
+with no genre or mood match at all, purely because its energy (0.37) is the
+closest in the catalogue to Jordan's target (0.38). Under `genre_first`,
+Focus Flow returns to #3 at 0.61 despite the diversity penalty, because the
+genre weight at 0.45 outweighs the mood mismatch. These shifts confirm the
+presets produce meaningfully different rankings, not just relabelled output.
+
 ### Visual Summary Table (Challenge 4)
 
 Terminal output is now rendered as a formatted table using the `tabulate`
@@ -130,6 +158,8 @@ genre/mood, numeric score, an ASCII progress bar scaled to the score, and
 the single highest-contributing reason for the recommendation. This replaces
 the previous card-style output and makes it easier to compare scores across
 all five results at a glance without reading separate blocks of text.
+
+![Table Format](image.png)
 
 ---
 

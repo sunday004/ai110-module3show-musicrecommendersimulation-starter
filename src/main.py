@@ -22,7 +22,7 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from tabulate import tabulate
-from recommender import load_songs, recommend_songs  # noqa: E402
+from recommender import load_songs, recommend_songs, RANKING_MODES  # noqa: E402
 
 # Resolve data path relative to this file — works from any working directory.
 DATA_PATH = Path(__file__).parent.parent / "data" / "songs.csv"
@@ -184,10 +184,22 @@ def _run_profiles(songs: list, profiles: dict, section_title: str) -> None:
         print()
 
 
+def _run_mode_comparison(songs: list, user_prefs: dict) -> None:
+    """Show how each ranking mode changes the top-5 for a single profile."""
+    print(f"\n{'*' * WIDTH}")
+    print(f"  RANKING MODE COMPARISON  |  {user_prefs['name'].upper()}")
+    print(f"{'*' * WIDTH}")
+    for mode in RANKING_MODES:
+        print(f"\n  Mode: {mode.upper()}")
+        recommendations = recommend_songs(user_prefs, songs, k=5, mode=mode)
+        _print_recommendations_table(recommendations)
+
+
 def main() -> None:
     songs = load_songs(str(DATA_PATH))
     _run_profiles(songs, USER_PROFILES, "STANDARD PROFILES")
     _run_profiles(songs, ADVERSARIAL_PROFILES, "ADVERSARIAL / EDGE-CASE PROFILES")
+    _run_mode_comparison(songs, USER_PROFILES["jordan"])
 
 
 if __name__ == "__main__":
