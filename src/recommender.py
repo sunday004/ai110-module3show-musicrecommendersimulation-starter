@@ -100,6 +100,9 @@ def load_songs(csv_path: str) -> List[Dict]:
     print(f"Loaded songs: {len(songs)}")
     return songs
 
+# Experiment result (genre halved, energy doubled): #1 rankings unchanged
+# across all profiles — genre+mood lock-in persists even at half weight.
+# Restored to original weights below.
 # ---------------------------------------------------------------------------
 # Scoring weights — must sum to 1.0
 # Tier 1 (core taste signals)

@@ -27,6 +27,9 @@ from recommender import load_songs, recommend_songs  # noqa: E402
 DATA_PATH = Path(__file__).parent.parent / "data" / "songs.csv"
 
 
+# ---------------------------------------------------------------------------
+# Standard profiles — clear, coherent taste clusters
+# ---------------------------------------------------------------------------
 USER_PROFILES = {
     "amara": {
         "name": "Amara",
@@ -57,6 +60,72 @@ USER_PROFILES = {
         "instrumentalness": 0.04,
         "popularity": 62,
         "preferred_decade": 2010,
+    },
+    "taylor": {
+        "name": "Taylor  [High-Energy Pop]",
+        "genre": "pop",
+        "mood": "happy",
+        "energy": 0.88,
+        "acousticness": 0.12,
+        "instrumentalness": 0.03,
+        "popularity": 82,
+        "preferred_decade": 2020,
+    },
+    "rex": {
+        "name": "Rex  [Deep Intense Rock]",
+        "genre": "rock",
+        "mood": "intense",
+        "energy": 0.92,
+        "acousticness": 0.10,
+        "instrumentalness": 0.12,
+        "popularity": 70,
+        "preferred_decade": 2010,
+    },
+}
+
+# ---------------------------------------------------------------------------
+# Adversarial / edge-case profiles — designed to expose scoring weaknesses
+# ---------------------------------------------------------------------------
+ADVERSARIAL_PROFILES = {
+    "zara": {
+        # Conflict: high energy (0.90) but melancholy mood.
+        # Energy pulls toward Gym Hero / Storm Runner; mood only matches
+        # Midnight Rain (blues, energy 0.44). Does genre+mood weight (0.50)
+        # beat a near-perfect energy match (0.18)?
+        "name": "Zara  [Conflicted: high-energy + melancholy]",
+        "genre": "blues",
+        "mood": "melancholy",
+        "energy": 0.90,
+        "acousticness": 0.20,
+        "instrumentalness": 0.15,
+        "popularity": 50,
+        "preferred_decade": 2010,
+    },
+    "ghost": {
+        # Ghost genre: 'metal' does not exist in the catalogue.
+        # Every song scores 0 on genre. The system must fall back entirely
+        # on mood, energy, and audio features to rank results.
+        "name": "Ghost  [Unknown genre: metal]",
+        "genre": "metal",
+        "mood": "intense",
+        "energy": 0.94,
+        "acousticness": 0.05,
+        "instrumentalness": 0.10,
+        "popularity": 65,
+        "preferred_decade": 2010,
+    },
+    "zen": {
+        # Omnivore: all continuous features set to midpoint (0.5).
+        # No strong pull in any direction — tests whether the scorer
+        # produces a meaningful ranking or a near-flat score distribution.
+        "name": "Zen  [Neutral omnivore: all features at midpoint]",
+        "genre": "classical",
+        "mood": "peaceful",
+        "energy": 0.50,
+        "acousticness": 0.50,
+        "instrumentalness": 0.50,
+        "popularity": 50,
+        "preferred_decade": 2000,
     },
 }
 
@@ -95,15 +164,23 @@ def _print_recommendation(rank: int, song: dict, score: float, explanation: str)
     print(f"       Why    : {reasons}")
 
 
-def main() -> None:
-    songs = load_songs(str(DATA_PATH))
-
-    for user_prefs in USER_PROFILES.values():
+def _run_profiles(songs: list, profiles: dict, section_title: str) -> None:
+    """Print a labelled section header then run every profile in the dict."""
+    print(f"\n{'*' * WIDTH}")
+    print(f"  {section_title}")
+    print(f"{'*' * WIDTH}")
+    for user_prefs in profiles.values():
         _print_profile_header(user_prefs)
         recommendations = recommend_songs(user_prefs, songs, k=5)
         for rank, (song, score, explanation) in enumerate(recommendations, start=1):
             _print_recommendation(rank, song, score, explanation)
         print(f"\n  {'-' * (WIDTH - 2)}")
+
+
+def main() -> None:
+    songs = load_songs(str(DATA_PATH))
+    _run_profiles(songs, USER_PROFILES, "STANDARD PROFILES")
+    _run_profiles(songs, ADVERSARIAL_PROFILES, "ADVERSARIAL / EDGE-CASE PROFILES")
 
 
 if __name__ == "__main__":
